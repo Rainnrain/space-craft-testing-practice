@@ -6,12 +6,16 @@
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
-        <module name="space-craft-testing-practice" />
+        <module name="space-craft" />
       </profile>
     </annotationProcessing>
+    <bytecodeTargetLevel>
+      <module name="space-craft" target="11" />
+    </bytecodeTargetLevel>
   </component>
   <component name="JavacSettings">
     <option name="ADDITIONAL_OPTIONS_OVERRIDE">
+      <module name="space-craft" options="-parameters" />
       <module name="space-craft-testing-practice" options="-parameters" />
     </option>
   </component>
