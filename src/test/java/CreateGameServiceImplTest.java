@@ -19,6 +19,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
@@ -64,5 +65,33 @@ public class CreateGameServiceImplTest {
         //then
         assertEquals(gameId, 1L);
 
+    }
+    @Test
+    public void should_throw_exception_when_level_is_empty(){
+        //given
+        CreateGameDTO createGameDTO = new CreateGameDTO();
+        createGameDTO.setUsername("username");
+        createGameDTO.setBoost(Boost.BIG_BOMB);
+
+
+        RuntimeException runtimeException = assertThrows(RuntimeException.class,
+                () -> {createGameService.createGame(createGameDTO);
+        });
+
+        assertEquals(runtimeException.getMessage(), "Game Boost type must not null");
+    }
+    @Test
+    public void should_throw_exception_when_boost_is_empty(){
+        //given
+        CreateGameDTO createGameDTO = new CreateGameDTO();
+        createGameDTO.setUsername("username");
+        createGameDTO.setLevel(Level.EASY);
+
+
+        RuntimeException runtimeException = assertThrows(RuntimeException.class,
+                () -> {createGameService.createGame(createGameDTO);
+                });
+
+        assertEquals(runtimeException.getMessage(), "Game Boost type must not null");
     }
 }
