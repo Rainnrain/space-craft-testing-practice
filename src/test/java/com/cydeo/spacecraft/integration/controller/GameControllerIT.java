@@ -28,12 +28,13 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @AutoConfigureMockMvc
 @SpringBootTest
-
+@Transactional
 public class GameControllerIT{
     @Autowired
     private MockMvc mockMvc;
@@ -131,10 +132,47 @@ public class GameControllerIT{
         assertEquals(game.getIsWin(), false);
 
         Player player = game.getPlayer();
+        assertTrue(player.getHealth() < 0);
+        assertEquals(player.getHealth(),-99);
+    }
 
-        if (player.getHealth()>=0){
-            Assertions.fail();
-        }
-        assertEquals(player.getHealth(), -99);
+    @Test
+    @Sql(scripts = "/sql/hit_and_game_continue.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
+    @Sql(scripts = "/sql/remove_data.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
+    public void should_game_continue_when_attack_type_is_target_to_player() throws Exception {
+        CreateHitRequest createHitRequest = new CreateHitRequest();
+        createHitRequest.setAttackType(AttackType.TARGET_TO_PLAYER);
+        createHitRequest.setGameId(1L);
+        // make a http request to specific
+        MvcResult result = mockMvc.perform(MockMvcRequestBuilders.post("/api/v1/game/createHit")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(createHitRequest)))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.responseMessage").value("SUCCESS"))
+                .andExpect(jsonPath("$.isWin").value(false))
+                .andExpect(jsonPath("$.isEnded").value(false))
+                .andReturn();
+
+        String json = result.getResponse().getContentAsString();
+        CreateHitResponse createHitResponse = objectMapper.readValue(json, CreateHitResponse.class);
+        Game game = gameRepository.findById(createHitResponse.getGameId()).orElseThrow();
+        assertEquals(game.getIsEnded(), false);
+        assertEquals(game.getIsWin(), false);
+    }
+
+    @Test
+    @Sql(scripts = "/sql/can_not_hit_game_ended.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
+    @Sql(scripts = "/sql/remove_data.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
+    public void should_not_hit_because_game_is_ended() throws Exception {
+        CreateHitRequest createHitRequest = new CreateHitRequest();
+        createHitRequest.setAttackType(AttackType.TARGET_TO_PLAYER);
+        createHitRequest.setGameId(1L);
+        // make a http request to specific
+        MvcResult result = mockMvc.perform(MockMvcRequestBuilders.post("/api/v1/game/createHit")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(createHitRequest)))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.responseMessage").value("FAILURE"))
+                .andReturn();
     }
 }

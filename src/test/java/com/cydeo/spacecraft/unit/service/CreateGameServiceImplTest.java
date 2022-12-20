@@ -10,7 +10,6 @@ import com.cydeo.spacecraft.repository.GameRepository;
 import com.cydeo.spacecraft.service.CreatePlayerService;
 import com.cydeo.spacecraft.service.CreateTargetService;
 import com.cydeo.spacecraft.service.impl.CreateGameServiceImpl;
-import com.cydeo.spacecraft.service.impl.CreatePlayerServiceImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -55,7 +54,6 @@ public class CreateGameServiceImplTest {
             add(new Target());
         }};
 
-
         Game game = new Game();
         game.setId(1L);
         //when
@@ -66,8 +64,8 @@ public class CreateGameServiceImplTest {
         Long gameId = createGameService.createGame(createGameDTO);
         //then
         assertEquals(gameId, 1L);
-
     }
+
     @Test
     public void should_throw_exception_when_level_is_empty(){
         //given
@@ -75,13 +73,25 @@ public class CreateGameServiceImplTest {
         createGameDTO.setUsername("username");
         createGameDTO.setBoost(Boost.BIG_BOMB);
 
+        //Player player = new Player();
 
-        RuntimeException runtimeException = assertThrows(RuntimeException.class,
-                () -> {createGameService.createGame(createGameDTO);
+        //Set<Target> targetSet = new HashSet<>(){{
+        //    add(new Target());
+        //}};
+
+        //Game game = new Game();
+        //game.setId(1L);
+        //when(createPlayerService.createPlayer(createGameDTO)).thenReturn(player);
+        //when(createTargetService.createTargets(createGameDTO.getLevel())).thenReturn(targetSet);
+        //when(gameRepository.save(any())).thenReturn(game);
+
+        RuntimeException runtimeException = assertThrows(RuntimeException.class, () ->{
+            createGameService.createGame(createGameDTO);
         });
 
-        assertEquals(runtimeException.getMessage(), "Game Boost type must not null");
+        assertEquals(runtimeException.getMessage(),"Game Level type must not null");
     }
+
     @Test
     public void should_throw_exception_when_boost_is_empty(){
         //given
@@ -89,11 +99,10 @@ public class CreateGameServiceImplTest {
         createGameDTO.setUsername("username");
         createGameDTO.setLevel(Level.EASY);
 
+        RuntimeException runtimeException = assertThrows(RuntimeException.class, () ->{
+            createGameService.createGame(createGameDTO);
+        });
 
-        RuntimeException runtimeException = assertThrows(RuntimeException.class,
-                () -> {createGameService.createGame(createGameDTO);
-                });
-
-        assertEquals(runtimeException.getMessage(), "Game Boost type must not null");
+        assertEquals(runtimeException.getMessage(),"Game Boost type must not null");
     }
 }

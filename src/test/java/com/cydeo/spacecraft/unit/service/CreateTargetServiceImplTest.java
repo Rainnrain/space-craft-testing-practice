@@ -16,12 +16,12 @@ public class CreateTargetServiceImplTest {
     private CreateTargetServiceImpl createTargetService;
 
     @BeforeEach
-    public void setUp() {
+    public void setUp(){
         createTargetService = new CreateTargetServiceImpl();
     }
 
     @Test
-    public void should_create_targets_with_easy_level() {
+    public void should_create_targets_with_easy_level(){
         // given
         Level level = Level.EASY;
         // when
@@ -30,14 +30,14 @@ public class CreateTargetServiceImplTest {
         Target target = targets.stream().findAny().get();
 
         assertEquals(targets.size(), 1);
-        assertEquals(target.getHealth(), 233);
-        assertEquals(target.getArmor(), 7);
-        assertEquals(target.getShootPower(), 10);
+        assertEquals(target.getHealth(),233);
+        assertEquals(target.getArmor(),7);
+        assertEquals(target.getShootPower(),10);
     }
 
 
     @Test
-    public void should_create_targets_with_medium_level() {
+    public void should_create_targets_with_medium_level(){
         // given
         Level level = Level.MEDIUM;
         // when
@@ -46,13 +46,13 @@ public class CreateTargetServiceImplTest {
         Target target = targets.stream().findAny().get();
 
         assertEquals(targets.size(), 3);
-        assertEquals(target.getHealth(), 932);
-        assertEquals(target.getArmor(), 301);
-        assertEquals(target.getShootPower(), 10);
+        assertEquals(target.getHealth(),932);
+        assertEquals(target.getArmor(),301);
+        assertEquals(target.getShootPower(),10);
     }
 
     @Test
-    public void should_create_targets_with_hard_level() {
+    public void should_create_targets_with_hard_level(){
         // given
         Level level = Level.HARD;
         // when
@@ -61,9 +61,9 @@ public class CreateTargetServiceImplTest {
         Target target = targets.stream().findAny().get();
 
         assertEquals(targets.size(), 4);
-        assertEquals(target.getHealth(), 1165);
-        assertEquals(target.getArmor(), 581);
-        assertEquals(target.getShootPower(), 1000);
+        assertEquals(target.getHealth(),1165);
+        assertEquals(target.getArmor(),581);
+        assertEquals(target.getShootPower(),1000);
     }
 
     @Test
@@ -77,4 +77,5 @@ public class CreateTargetServiceImplTest {
         assertEquals(runtimeException.getMessage(), "Level type must be valid");
 
     }
+
 }
