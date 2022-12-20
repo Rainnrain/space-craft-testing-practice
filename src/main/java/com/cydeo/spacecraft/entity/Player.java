@@ -15,6 +15,8 @@ public class Player extends BaseEntity  {
     private Integer armor;
     private Integer shootPower;
 
+    private boolean movable;
+
     @OneToOne
     @JoinColumn
     @JsonIgnore

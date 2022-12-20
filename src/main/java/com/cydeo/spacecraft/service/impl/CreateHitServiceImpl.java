@@ -46,12 +46,14 @@ public class CreateHitServiceImpl implements CreateHitService {
                 .orElseThrow(() -> new RuntimeException("Target Not Found"));
 
         int playerHealth = player.getHealth();
+        boolean movable=player.isMovable();
         switch (attackType) {
             case PLAYER_TO_TARGET:
                 final int targetHealth = target.getHealth() + target.getArmor() - player.getShootPower();
                 target.setHealth(targetHealth);
                 break;
             case TARGET_TO_PLAYER:
+                if(movable)break;
                 playerHealth = player.getHealth() + player.getArmor() - target.getShootPower();
                 player.setHealth(playerHealth);
                 break;

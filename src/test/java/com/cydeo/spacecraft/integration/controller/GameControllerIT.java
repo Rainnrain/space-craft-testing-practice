@@ -27,8 +27,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Set;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -108,7 +107,7 @@ public class GameControllerIT{
     @Test
     @Sql(scripts = "/sql/hit_and_player_lose.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
     @Sql(scripts = "/sql/remove_data.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
-    public void should_player_lose_when_attack_type_is_target_to_player() throws Exception {
+    public void should_player_lose_when_attack_type_is_target_to_player_and_movable_false() throws Exception {
         CreateHitRequest createHitRequest = new CreateHitRequest();
         createHitRequest.setAttackType(AttackType.TARGET_TO_PLAYER);
         createHitRequest.setGameId(1L);
@@ -134,12 +133,13 @@ public class GameControllerIT{
         Player player = game.getPlayer();
         assertTrue(player.getHealth() < 0);
         assertEquals(player.getHealth(),-99);
+        assertTrue(!game.getPlayer().isMovable());
     }
 
     @Test
     @Sql(scripts = "/sql/hit_and_game_continue.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
     @Sql(scripts = "/sql/remove_data.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
-    public void should_game_continue_when_attack_type_is_target_to_player() throws Exception {
+    public void should_game_continue_when_attack_type_is_target_to_player_and_movable_is_false() throws Exception {
         CreateHitRequest createHitRequest = new CreateHitRequest();
         createHitRequest.setAttackType(AttackType.TARGET_TO_PLAYER);
         createHitRequest.setGameId(1L);
@@ -158,6 +158,8 @@ public class GameControllerIT{
         Game game = gameRepository.findById(createHitResponse.getGameId()).orElseThrow();
         assertEquals(game.getIsEnded(), false);
         assertEquals(game.getIsWin(), false);
+        assertTrue(!game.getPlayer().isMovable());
+
     }
 
     @Test
@@ -174,5 +176,63 @@ public class GameControllerIT{
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.responseMessage").value("FAILURE"))
                 .andReturn();
+    }
+
+    @Test
+    @Sql(scripts = "/sql/hit_and_game_continue_movable_true.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
+    @Sql(scripts = "/sql/remove_data.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
+    public void should_game_continue_when_attack_type_is_target_to_player_and_movable_is_true_health_remains_unchanged() throws Exception {
+        CreateHitRequest createHitRequest = new CreateHitRequest();
+        createHitRequest.setAttackType(AttackType.TARGET_TO_PLAYER);
+        createHitRequest.setGameId(1L);
+        // make a http request to specific
+        MvcResult result = mockMvc.perform(MockMvcRequestBuilders.post("/api/v1/game/createHit")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(createHitRequest)))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.responseMessage").value("SUCCESS"))
+                .andExpect(jsonPath("$.isWin").value(false))
+                .andExpect(jsonPath("$.isEnded").value(false))
+                .andReturn();
+
+        String json = result.getResponse().getContentAsString();
+        CreateHitResponse createHitResponse = objectMapper.readValue(json, CreateHitResponse.class);
+        Game game = gameRepository.findById(createHitResponse.getGameId()).orElseThrow();
+        assertEquals(game.getIsEnded(), false);
+        assertEquals(game.getIsWin(), false);
+        assertTrue(game.getPlayer().isMovable());
+        assertEquals(game.getPlayer().getHealth(), 2000);
+
+    }
+
+    @Test
+    @Sql(scripts = "/sql/hit_and_player_lose_movable_true.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
+    @Sql(scripts = "/sql/remove_data.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
+    public void should_player_lose_when_attack_type_is_target_to_player_and_movable_true_health_remains_same() throws Exception {
+        CreateHitRequest createHitRequest = new CreateHitRequest();
+        createHitRequest.setAttackType(AttackType.TARGET_TO_PLAYER);
+        createHitRequest.setGameId(1L);
+        // make a http request to specific
+        MvcResult result = mockMvc.perform(MockMvcRequestBuilders.post("/api/v1/game/createHit")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(createHitRequest)))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.responseMessage").value("SUCCESS"))
+                .andExpect(jsonPath("$.isWin").value(false))
+                .andExpect(jsonPath("$.isEnded").value(false))
+                .andReturn();
+
+        String json = result.getResponse().getContentAsString();
+        CreateHitResponse createHitResponse = objectMapper.readValue(json, CreateHitResponse.class);
+
+
+        Game game = gameRepository.findById(createHitResponse.getGameId()).orElseThrow();
+
+        assertEquals(game.getIsEnded(), false);
+        assertEquals(game.getIsWin(), false);
+
+        Player player = game.getPlayer();
+        assertEquals(player.getHealth(),1);
+        assertTrue(game.getPlayer().isMovable());
     }
 }

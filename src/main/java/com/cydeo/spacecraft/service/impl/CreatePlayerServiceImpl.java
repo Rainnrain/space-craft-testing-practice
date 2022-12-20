@@ -16,6 +16,7 @@ public class CreatePlayerServiceImpl implements CreatePlayerService {
         int additionalArmor = 0;
         int additionalHealth = 0;
         int additionalPower = 0;
+        boolean movable=false;
 
         switch (createGameDTO.getBoost()) {
             case SUPER_AMMO:
@@ -28,6 +29,10 @@ public class CreatePlayerServiceImpl implements CreatePlayerService {
                 additionalArmor = 235;
                 additionalHealth = 2145;
                 break;
+            case HIGH_SPEED:
+                    additionalArmor=800;
+                    movable=true;
+
             default:
                 throw new RuntimeException("Boost type must be valid");
         }
@@ -36,6 +41,7 @@ public class CreatePlayerServiceImpl implements CreatePlayerService {
         player.setArmor(DEFAULT_ARMOR + additionalArmor);
         player.setHealth(DEFAULT_HEALTH + additionalHealth);
         player.setShootPower(SHOOT_POWER + additionalPower);
+        player.setMovable(movable);
         return player;
     }
 }
