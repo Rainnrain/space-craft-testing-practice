@@ -1,3 +1,5 @@
+package com.cydeo.spacecraft.unit.service;
+
 import com.cydeo.spacecraft.dto.CreateHitDTO;
 import com.cydeo.spacecraft.entity.Game;
 import com.cydeo.spacecraft.entity.Player;
@@ -199,6 +201,7 @@ public class CreateHitServiceImplTest {
 
         Game actualGame = createHitService.createHit(createHitDTO);
         Player actualGamePlayer = actualGame.getPlayer();
+
         assertEquals(actualGame.getIsEnded(), true);
         assertTrue(actualGamePlayer.getHealth()<=0);
 
