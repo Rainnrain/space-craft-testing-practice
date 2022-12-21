@@ -30,9 +30,9 @@ public class CreatePlayerServiceImpl implements CreatePlayerService {
                 additionalHealth = 2145;
                 break;
             case HIGH_SPEED:
-                    additionalArmor=800;
-                    movable=true;
-
+                additionalArmor=800;
+                movable=true;
+                break;
             default:
                 throw new RuntimeException("Boost type must be valid");
         }

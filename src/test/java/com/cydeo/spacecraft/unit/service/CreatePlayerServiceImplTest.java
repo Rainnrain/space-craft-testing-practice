@@ -41,7 +41,7 @@ public class CreatePlayerServiceImplTest { //Unit Test
     }
 
     @Test
-    public void should_create_player_with_extra_shield_boost_type_and_level_easy() {
+    public void should_create_player_with_extra_shield_boost_type_and_level_easy_and_movable_false() {
 
         //given
         CreateGameDTO createGameDTO = new CreateGameDTO();
@@ -57,6 +57,7 @@ public class CreatePlayerServiceImplTest { //Unit Test
         assertEquals(player.getHealth(), 4145);
         assertEquals(player.getArmor(), 242);
         assertEquals(player.getShootPower(), 10);
+        assertEquals(!player.isMovable()==false, false);
     }
 
     @Test
@@ -94,5 +95,25 @@ public class CreatePlayerServiceImplTest { //Unit Test
         });
 
         assertEquals(runtimeException.getMessage(), "Boost type must be valid");
+    }
+
+    @Test
+    public void should_create_player_with_highspeed_movable_true_and_level_easy() {
+
+        //given
+        CreateGameDTO createGameDTO = new CreateGameDTO();
+        createGameDTO.setBoost(Boost.HIGH_SPEED);
+        createGameDTO.setLevel(Level.EASY);
+        createGameDTO.setUsername("username");
+
+        //when
+
+        Player player = createPlayerService.createPlayer(createGameDTO);
+
+        //Then
+        assertEquals(player.getHealth(), 2000);
+        assertEquals(player.getArmor(), 807);
+        assertEquals(player.getShootPower(), 10);
+        assertEquals(player.isMovable()==true, true);
     }
 }

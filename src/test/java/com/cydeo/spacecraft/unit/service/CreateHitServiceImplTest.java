@@ -242,4 +242,38 @@ public class CreateHitServiceImplTest {
         assertTrue(actualGamePlayer.getHealth()<=0);
         assertFalse(actualGame.getIsWin()&&!actualGame.getIsEnded());
     }
+
+    @Test
+    public void player_health_should_not_decrease_if_movable_is_true_and_attack_type_is_target_to_player(){
+        //given
+        CreateHitDTO createHitDTO = new CreateHitDTO();
+        createHitDTO.setAttackType(AttackType.TARGET_TO_PLAYER);
+        createHitDTO.setGameId(1L);
+
+        Target target = new Target();
+        target.setHealth(1000);
+        target.setArmor(40);
+        target.setId(1L);
+
+        Set<Target> targetSet = new HashSet<>();
+        targetSet.add(target);
+
+        Player player = new Player();
+        player.setHealth(200);
+        player.setShootPower(250);
+        player.setMovable(true);
+
+        Game game = new Game();
+        game.setTargets(targetSet);
+        game.setPlayer(player);
+        game.setIsEnded(false);
+        //when
+        when(gameRepository.findById(createHitDTO.getGameId())).thenReturn(Optional.of(game));
+        when(gameRepository.save(game)).thenReturn(game);
+
+        Game actualGame = createHitService.createHit(createHitDTO);
+        //then
+        Player actualGamePlayer = actualGame.getPlayer();
+        assertEquals(actualGamePlayer.getHealth(), 200);
+    }
 }
