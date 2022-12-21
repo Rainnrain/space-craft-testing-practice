@@ -59,7 +59,7 @@ public class CreateGameServiceImplTest {
         //when
         when(createPlayerService.createPlayer(createGameDTO)).thenReturn(player);
         when(createTargetService.createTargets(createGameDTO.getLevel())).thenReturn(targetSet);
-        when(gameRepository.save(any())).thenReturn(game);
+        when(gameRepository.save(any())).thenReturn(game); // The type doesn't matter since we aren't connected to a database
 
         Long gameId = createGameService.createGame(createGameDTO);
         //then
