@@ -13,6 +13,7 @@ import com.cydeo.spacecraft.service.impl.CreateGameServiceImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
@@ -26,8 +27,8 @@ import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 public class CreateGameServiceImplTest {
-
-    private CreateGameServiceImpl createGameService;
+@InjectMocks // creates obj and injects mocks
+    private CreateGameServiceImpl createGameService; // could also use @InjectMOcs and remove setup method
 
     @Mock
     private CreatePlayerService createPlayerService;
@@ -36,14 +37,14 @@ public class CreateGameServiceImplTest {
     @Mock
     private GameRepository gameRepository;
 
-    @BeforeEach
-    public void setUp(){
-        createGameService = new CreateGameServiceImpl(createPlayerService, createTargetService,gameRepository);
-    }
+//    @BeforeEach
+//    public void setUp(){
+//        createGameService = new CreateGameServiceImpl(createPlayerService, createTargetService,gameRepository);
+//    }
 
     @Test
     public void should_create_game_successfully(){
-        //given
+        //given I'm providing the information
         CreateGameDTO createGameDTO = new CreateGameDTO();
         createGameDTO.setUsername("username");
         createGameDTO.setBoost(Boost.BIG_BOMB);
@@ -56,13 +57,13 @@ public class CreateGameServiceImplTest {
 
         Game game = new Game();
         game.setId(1L);
-        //when
+        //when - telling the test what to do with this information
         when(createPlayerService.createPlayer(createGameDTO)).thenReturn(player);
         when(createTargetService.createTargets(createGameDTO.getLevel())).thenReturn(targetSet);
         when(gameRepository.save(any())).thenReturn(game); // The type doesn't matter since we aren't connected to a database
 
         Long gameId = createGameService.createGame(createGameDTO);
-        //then
+        //then- verifying the outcome
         assertEquals(gameId, 1L);
     }
 

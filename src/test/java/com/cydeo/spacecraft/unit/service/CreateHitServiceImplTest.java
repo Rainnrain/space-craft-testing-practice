@@ -28,7 +28,7 @@ public class CreateHitServiceImplTest {
     private CreateHitServiceImpl createHitService;
 
     @Mock
-    private GameRepository gameRepository;
+    private GameRepository gameRepository; // Use mock since it is a dependent object
 
     @BeforeEach
     public void setUp(){

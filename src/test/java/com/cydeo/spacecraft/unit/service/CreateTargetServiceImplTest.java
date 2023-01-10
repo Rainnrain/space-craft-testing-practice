@@ -29,7 +29,7 @@ public class CreateTargetServiceImplTest {
         // then
         Target target = targets.stream().findAny().get();
 
-        assertEquals(targets.size(), 1);
+        assertEquals(targets.size(), 1); // are these in the opposite position
         assertEquals(target.getHealth(),233);
         assertEquals(target.getArmor(),7);
         assertEquals(target.getShootPower(),10);
